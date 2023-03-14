@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo's</title>
+</head>
+<body>
+    <h1 id="h"></h1>
+    <div id="tds"></div>
+    <table>
+        <tr>
+            <input id="i" type="text" placeholder="What needs to be done?"></input>
+            <button id="nt">Create</button>
+        </tr>
+    </table>
+    <script>
+        const getInput = (id) => {
+            return document.getElementById(id).value;
+        }
+        const clearInput = (id) => {
+            document.getElementById(id).value = '';
+        }
+        class Todo {
+            constructor(task) {
+                this.id = crypto.randomUUID();
+                this.task = task;
+            }
+        }
+        const addTodo = (task, todos) => {
+            todos.push(new Todo(task))
+        }
+        const completeTodo = (id, tds) => {
+            return tds.filter(t => t.id !== id)
+        }
+        const updateTodos = (todos) => {
+            let html = "";
+            todos.forEach(t => {
+                const id = t.id;
+                html += `<li>${t.task}<button id=${id} class="completer">Done</button></li>`
+            });
+            document.getElementById("tds").innerHTML = html;
+        }
+
+        window.onload = function () {
+            let todos = [];
+
+            document.getElementById("h").innerHTML = `Todo's for today, ${new Date().toString().split(' ').slice(0, 4).join(' ')}`;
+
+            document.getElementById("nt").addEventListener('click', () => {
+                const i = getInput("i");
+                if (i.length) {
+                    addTodo(i, todos);
+                    clearInput("i");
+                    updateTodos(todos);
+                }
+            });
+
+            document.addEventListener("click", function(e){
+                const t = e.target.closest(".completer");
+                if(t){
+                    todos = completeTodo(t.id, todos);
+                    updateTodos(todos);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
